@@ -23,6 +23,8 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: install dependencies
+        run: yarn
       - name: run test
         run: yarn test:cov
       - uses: codecov/codecov-action@v1
