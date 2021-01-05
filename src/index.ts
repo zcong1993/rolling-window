@@ -44,8 +44,6 @@ export interface RollingWindowOpts {
   ignoreCurrent?: boolean
 }
 
-const hr2nano = (hr: [number, number]) => hr[0] * 1e9 + hr[1]
-
 export class RollingWindow {
   private readonly win: Window
   private lastTime: ReturnType<typeof process.hrtime> = process.hrtime()
@@ -93,24 +91,23 @@ export class RollingWindow {
       return
     }
 
-    let offset = this.offset
+    const offset = this.offset
     // reset expired buckets
-    const start = offset + 1
-    let steps = start + span
-    let remainder: number
-    if (steps > this.opts.size) {
-      remainder = steps - this.opts.size
-      steps = this.opts.size
+    for (let i = 0; i < span; i++) {
+      this.win.resetBucket(offset + i + 1)
     }
-    for (let i = start; i < steps; i++) {
-      this.win.resetBucket(i)
-      offset = i
-    }
-    for (let i = 0; i < remainder; i++) {
-      this.win.resetBucket(i)
-      offset = i
-    }
-    this.offset = offset
-    this.lastTime = process.hrtime()
+
+    this.offset = (offset + span) % this.opts.size
+    const now = hr2nano(process.hrtime())
+    const last = now - ((now - hr2nano(this.lastTime)) % this.opts.interval)
+    // align to interval time boundary
+    this.lastTime = nano2hr(last)
   }
+}
+
+export const hr2nano = (hr: [number, number]) => hr[0] * 1e9 + hr[1]
+export const nano2hr = (t: number): [number, number] => {
+  const hr0 = Math.floor(t / 1e9)
+  const hr1 = t - hr0 * 1e9
+  return [hr0, hr1]
 }

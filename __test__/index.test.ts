@@ -1,4 +1,6 @@
-import { RollingWindow } from '../src'
+import { RollingWindow, hr2nano, nano2hr } from '../src'
+
+const sleep = (interval: number) => new Promise((r) => setTimeout(r, interval))
 
 it('should work well', async () => {
   const interval = 50
@@ -74,15 +76,13 @@ const initRw = async (ignoreCurrent: boolean) => {
     ignoreCurrent,
   })
 
-  const sleep = (n: number = interval) => new Promise((r) => setTimeout(r, n))
-
   for (let x = 0; x < size; x++) {
     for (let i = 0; i <= x; i++) {
       rw.add(i)
     }
 
     if (x < size - 1) {
-      await sleep()
+      await sleep(interval)
     }
   }
 
@@ -105,4 +105,11 @@ it('reduce should works well 2', async () => {
   rw.reduce((b) => (res += b.sum))
 
   expect(res).toBe(4)
+})
+
+it('helper should works well', () => {
+  const t = process.hrtime()
+  const tt = hr2nano(t)
+  const t2 = nano2hr(tt)
+  expect(t2).toEqual(t)
 })
