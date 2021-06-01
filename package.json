@@ -1,6 +1,6 @@
 {
   "name": "@zcong/rolling-window",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "rolling window",
   "main": "./dist/index.js",
   "files": [
