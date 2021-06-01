@@ -40,18 +40,25 @@ export class Window {
 
 export interface RollingWindowOpts {
   size: number
+  /**
+   * ms
+   */
   interval: number
   ignoreCurrent?: boolean
 }
 
 export class RollingWindow {
   private readonly win: Window
-  private lastTime: ReturnType<typeof process.hrtime> = process.hrtime()
+  private lastTime: number
   private offset: number = 0
-  constructor(private readonly opts: RollingWindowOpts) {
+  constructor(
+    private readonly opts: RollingWindowOpts,
+    private readonly timer: Timer = new DefaultTimer()
+  ) {
     this.win = new Window(this.opts.size)
     // ms to nano
     this.opts.interval *= 1e6
+    this.lastTime = timer.now()
   }
 
   add(v: number) {
@@ -76,7 +83,7 @@ export class RollingWindow {
 
   private span() {
     const offset = Math.floor(
-      hr2nano(process.hrtime(this.lastTime)) / this.opts.interval
+      (this.timer.now() - this.lastTime) / this.opts.interval
     )
     if (offset >= 0 && offset < this.opts.size) {
       return offset
@@ -98,16 +105,36 @@ export class RollingWindow {
     }
 
     this.offset = (offset + span) % this.opts.size
-    const now = hr2nano(process.hrtime())
-    const last = now - ((now - hr2nano(this.lastTime)) % this.opts.interval)
+    const now = this.timer.now()
+    const last = now - ((now - this.lastTime) % this.opts.interval)
     // align to interval time boundary
-    this.lastTime = nano2hr(last)
+    this.lastTime = last
+  }
+}
+
+export interface Timer {
+  now(): number // nano
+}
+
+export class DefaultTimer implements Timer {
+  now() {
+    return hr2nano(process.hrtime())
   }
 }
 
 export const hr2nano = (hr: [number, number]) => hr[0] * 1e9 + hr[1]
-export const nano2hr = (t: number): [number, number] => {
-  const hr0 = Math.floor(t / 1e9)
-  const hr1 = t - hr0 * 1e9
-  return [hr0, hr1]
+
+/**
+ * for test
+ */
+export class MockTimer implements Timer {
+  constructor(private _now: number = hr2nano(process.hrtime())) {}
+
+  now() {
+    return this._now
+  }
+
+  add(interval: number) {
+    this._now += interval
+  }
 }
