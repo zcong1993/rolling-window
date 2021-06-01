@@ -1,6 +1,6 @@
 # rolling-window
 
-[![NPM version](https://img.shields.io/npm/v/@zcong/rolling-window.svg?style=flat)](https://npmjs.com/package/@zcong/rolling-window) [![NPM downloads](https://img.shields.io/npm/dm/@zcong/rolling-window.svg?style=flat)](https://npmjs.com/package/@zcong/rolling-window) [![CircleCI](https://circleci.com/gh/zcong1993/rolling-window/tree/master.svg?style=shield)](https://circleci.com/gh/zcong1993/rolling-window/tree/master) [![codecov](https://codecov.io/gh/zcong1993/rolling-window/branch/master/graph/badge.svg)](https://codecov.io/gh/zcong1993/rolling-window)
+[![NPM version](https://img.shields.io/npm/v/@zcong/rolling-window.svg?style=flat)](https://npmjs.com/package/@zcong/rolling-window) [![NPM downloads](https://img.shields.io/npm/dm/@zcong/rolling-window.svg?style=flat)](https://npmjs.com/package/@zcong/rolling-window) [![Test](https://github.com/zcong1993/rolling-window/actions/workflows/test.yml/badge.svg)](https://github.com/zcong1993/rolling-window/actions/workflows/test.yml) [![codecov](https://codecov.io/gh/zcong1993/rolling-window/branch/master/graph/badge.svg)](https://codecov.io/gh/zcong1993/rolling-window)
 
 > rolling window
 
